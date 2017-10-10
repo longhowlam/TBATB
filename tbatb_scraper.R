@@ -7,6 +7,41 @@ library(dplyr)
 
 
 
+
+start = ymd(080107)
+outrecaps2008 = NULL
+
+for(i in 1:52)
+{
+  
+  dstring = format(start, format="%y%m%d")  
+  link = paste0("http://soapcentral.com/bb/recaps/2008/", dstring, ".php")
+  print(link)
+  out = read_html(link)
+  recaps = html_nodes(out, xpath = '//div[@id="news_article"]')  %>% html_text()
+  temp = tibble(recaps=recaps, date = start)
+  outrecaps2008 = bind_rows(outrecaps2008, temp)
+  start = start + 7
+}
+
+
+
+start = ymd(090105)
+outrecaps2009 = NULL
+
+for(i in 1:52)
+{
+  
+  dstring = format(start, format="%y%m%d")  
+  link = paste0("http://soapcentral.com/bb/recaps/2009/", dstring, ".php")
+  print(link)
+  out = read_html(link)
+  recaps = html_nodes(out, xpath = '//div[@id="news_article"]')  %>% html_text()
+  temp = tibble(recaps=recaps, date = start)
+  outrecaps2009 = bind_rows(outrecaps2009, temp)
+  start = start + 7
+}
+
 start = ymd(100104)
 outrecaps2010 = NULL
 
@@ -148,6 +183,8 @@ for(i in 1:42)
 
 
 AllBB = bind_rows(
+  outrecaps2008,
+  outrecaps2009,
   outrecaps2010,
   outrecaps2011,
   outrecaps2012,
