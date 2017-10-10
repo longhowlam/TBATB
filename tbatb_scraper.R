@@ -148,6 +148,7 @@ for(i in 1:42)
 
 
 AllBB = bind_rows(
+  outrecaps2010,
   outrecaps2011,
   outrecaps2012,
   outrecaps2013,
