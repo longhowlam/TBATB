@@ -3,6 +3,7 @@ library(lubridate)
 library(tibble)
 library(dplyr)
 
+# using rvest to scrape 15 years of Bold and Beatiful recaps 
 # see http://soapcentral.com/bb/recaps/index.php
 
 yearstartdates = ymd(030106, 040105, 050103, 060102, 070101, 080107, 090105, 100104, 110103, 120102, 130107, 140106, 150105, 160104)

@@ -1,7 +1,7 @@
 ################################################
 
 ### Glove on Bold and Beautifull recaps
-### LH
+
 
 library(stringr)
 library(text2vec)
