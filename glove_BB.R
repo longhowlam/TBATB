@@ -6,7 +6,8 @@
 library(stringr)
 library(text2vec)
 library(visNetwork)
-
+library(ggplot2)
+library(plotly)
 
 AllBB = readRDS("data/AllBB.RDs")
 
@@ -69,33 +70,33 @@ dim(word_vectors)
 
 ###### distances between some characters.
 
-BBchars = c("quinn", "eric", "steffy", "ridge", "bill", "brooke", "caroline", "liam",   "thomas", "taylor")
+BBchars = c("quinn", "eric", "steffy", "ridge", "bill", "brooke", "caroline", "liam",   "thomas", "taylor", "rick", "bridget")
 
 
 ff = function(word)
 {
   WV <- word_vectors[word, , drop = FALSE] 
   cos_sim = sim2(x = word_vectors, y = WV, method = "cosine", norm = "l2")
-  tmp = head(sort(cos_sim[,1], decreasing = TRUE), 25)
+  tmp = head(sort(cos_sim[,1], decreasing = TRUE), 10)
   tibble::tibble(from = word, to = names(tmp), value = tmp)
 }
 
 BBcharsDistances = purrr::map_dfr(BBchars, ff)
-BBcharsDistances = BBcharsDistances %>% dplyr::filter(value < 0.99)
 
-nodes = data.frame(
-  id = unique(c(BBcharsDistances$from, BBcharsDistances$to)),
-  label = unique(c(BBcharsDistances$from, BBcharsDistances$to)),
-  title = unique(c(BBcharsDistances$from, BBcharsDistances$to)),
-  value = 100
-  )
+## subtract mean just for plotting purposes....
+## remove distance "one"
 
-visNetwork(nodes, edges = BBcharsDistances) %>%
-  visPhysics(
-    solver = "forceAtlas2Based", 
-    forceAtlas2Based = list(gravitationalConstant = -1000, maxVelocity = 10)
-    ) %>%
-  visOptions(highlightNearest = TRUE, nodesIdSelection = TRUE) 
+BBcharsDistances$value2 = BBcharsDistances$value - mean( BBcharsDistances$value)
+BBcharsDistances = BBcharsDistances  %>% dplyr::filter(value < 0.99)
 
+
+p = ggplot(BBcharsDistances, aes(x = to)) +
+  geom_bar(aes(weight=value2), color="black") + 
+  facet_wrap(~from) +
+  coord_flip() +
+  labs(y="person similarity") +
+  ggtitle("Word-embedding distances between Bold & Beautiful characters")
+
+p
 
 
