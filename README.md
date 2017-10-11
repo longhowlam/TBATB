@@ -1,2 +1,2 @@
 # TBATB
-experiment in scraping the bold and the beautiful recaps
+Word embedding experiment on scraped Bold and the Beautiful recaps
