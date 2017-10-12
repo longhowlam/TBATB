@@ -69,7 +69,6 @@ t1-t0
 ## save the wordvectors
 
 saveRDS(word_vectors, "data/word_vectors_BB.RDs")
-dim(word_vectors)
 
 
 ###### distances between some characters.
@@ -79,8 +78,8 @@ BBchars = c("quinn", "eric", "steffy", "ridge", "bill", "brooke", "caroline", "l
 
 ff = function(word)
 {
-  WV <- word_vectors[word, , drop = FALSE] 
-  cos_sim = sim2(x = word_vectors, y = WV, method = "cosine", norm = "l2")
+  WV <- word_vectorsT[word, , drop = FALSE] 
+  cos_sim = sim2(x = word_vectorsT, y = WV, method = "cosine", norm = "l2")
   tmp = head(sort(cos_sim[,1], decreasing = TRUE), 10)
   tibble::tibble(from = word, to = names(tmp), value = tmp)
 }
