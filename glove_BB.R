@@ -9,7 +9,11 @@ library(visNetwork)
 library(ggplot2)
 library(plotly)
 
+
+#### import recpas of BB
 AllBB = readRDS("data/AllBB.RDs")
+
+#### transform to lower and create tokens
 
 AllBB$recapsclean =  str_replace_all(AllBB$recaps, "\n", "") %>% tolower
 AllBB$id = 1:dim(AllBB)[1]
@@ -17,7 +21,7 @@ AllBB$id = 1:dim(AllBB)[1]
 AllBB_tokens = AllBB$recapsclean %>%
   word_tokenizer
 
-##### and use the tokens to create an iterator and vocabular
+##### use the tokens to create an iterator and vocabular
 it_train = itoken(
   AllBB_tokens, 
   ids = AllBB$id,
@@ -53,7 +57,7 @@ dim(tcm)
 
 #######  Glove word embeddings
 
-## Dit duurt op mijn 4 cores servertje ruim een uur.
+## This can take some time, about an hour on my little 4 core server.
 t0 = proc.time()
 
 glove = GlobalVectors$new(word_vectors_size = 250, vocabulary = pruned_vocab, x_max = 10, learning_rate = 0.07)
@@ -62,7 +66,7 @@ word_vectors = glove$fit_transform(tcm, n_iter = 30)
 t1 = proc.time()
 t1-t0
 
-## bewaar de wordvectors
+## save the wordvectors
 
 saveRDS(word_vectors, "data/word_vectors_BB.RDs")
 dim(word_vectors)
