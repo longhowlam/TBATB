@@ -103,3 +103,17 @@ p = ggplot(BBcharsDistances, aes(x = to)) +
 p
 
 
+ff("steffy")
+
+### word minus other word linguistic regularities
+
+twowords = function(w1,w2){
+  out = word_vectors[w1, , drop = FALSE] - 
+    word_vectors[w2, , drop = FALSE]
+
+  cos_sim = sim2(x = word_vectors, y = out, method = "cosine", norm = "l2")
+  head(sort(cos_sim[,1], decreasing = TRUE), 7)
+}
+
+twowords("steffy", "liam")
+
