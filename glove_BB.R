@@ -2,7 +2,6 @@
 
 ### Glove on Bold and Beautifull recaps
 
-
 library(stringr)
 library(text2vec)
 library(visNetwork)
@@ -60,7 +59,13 @@ dim(tcm)
 ## This can take some time, about an hour on my little 4 core server.
 t0 = proc.time()
 
-glove = GlobalVectors$new(word_vectors_size = 250, vocabulary = pruned_vocab, x_max = 10, learning_rate = 0.07)
+glove = GlobalVectors$new(
+  word_vectors_size = 250, 
+  vocabulary = pruned_vocab,
+  x_max = 10, 
+  learning_rate = 0.07
+)
+
 word_vectors = glove$fit_transform(tcm, n_iter = 30)
 
 t1 = proc.time()
@@ -93,11 +98,15 @@ BBcharsDistances$value2 = BBcharsDistances$value - mean( BBcharsDistances$value)
 BBcharsDistances = BBcharsDistances  %>% dplyr::filter(value < 0.99)
 
 
-p = ggplot(BBcharsDistances, aes(x = to)) +
-  geom_bar(aes(weight=value2), color="black") + 
-  facet_wrap(~from) +
+p = ggplot(
+  BBcharsDistances, aes(x = to)
+) +
+  geom_bar(
+    aes(weight=value2), color="black"
+  ) + 
+  facet_wrap( ~from ) +
   coord_flip() +
-  labs(y="person similarity") +
+  labs( y = "person similarity") +
   ggtitle("Word-embedding distances between Bold & Beautiful characters")
 
 p
