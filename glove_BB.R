@@ -1,4 +1,4 @@
-################################################
+############################################################################################################
 
 ### Glove on Bold and Beautifull recaps
 
@@ -9,14 +9,17 @@ library(ggplot2)
 library(plotly)
 
 
-#### import recpas of BB
+#### import recpas of BB ################################################################
 AllBB = readRDS("data/AllBB.RDs")
+
 
 #### transform to lower and create tokens
 
 AllBB$recapsclean =  str_replace_all(AllBB$recaps, "\n", "") %>% tolower
 AllBB$id = 1:dim(AllBB)[1]
 
+
+####### tokenize ############################################################
 AllBB_tokens = AllBB$recapsclean %>%
   word_tokenizer
 
@@ -27,7 +30,6 @@ it_train = itoken(
   progressbar = TRUE
 )
 
-
 stopw = c(tm::stopwords(), letters)
 
 vocab = create_vocabulary(
@@ -36,6 +38,8 @@ vocab = create_vocabulary(
   stopwords = stopw
 )
 vocab
+
+########### Prune vocabulary ############################################################
 
 pruned_vocab = prune_vocabulary(
   vocab, 
@@ -50,9 +54,12 @@ vectorizer <- vocab_vectorizer(
   pruned_vocab
 )
 
+
+#### Create term co-occurence matrix ####################################################
+
 tcm <- create_tcm(it_train, vectorizer, skip_grams_window = 5L)
 dim(tcm)
-
+tcm[1:10,1:10]
 
 #######  Glove word embeddings
 
@@ -75,11 +82,11 @@ t1-t0
 
 saveRDS(word_vectors, "data/word_vectors_BB.RDs")
 
+#word_vectors = readRDS("data/word_vectors_BB.RDs")
 
-###### distances between some characters.
+###### distances between some characters ################################################
 
 BBchars = c("quinn", "eric", "steffy", "ridge", "bill", "brooke", "caroline", "liam",   "thomas", "taylor", "rick", "bridget")
-
 
 ff = function(word)
 {
@@ -97,6 +104,8 @@ BBcharsDistances = purrr::map_dfr(BBchars, ff)
 BBcharsDistances$value2 = BBcharsDistances$value - mean( BBcharsDistances$value)
 BBcharsDistances = BBcharsDistances  %>% dplyr::filter(value < 0.99)
 
+
+#### create plot with character distances ###############################################
 
 p = ggplot(
   BBcharsDistances, aes(x = to)
