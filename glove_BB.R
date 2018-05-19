@@ -7,7 +7,7 @@ library(text2vec)
 library(visNetwork)
 library(ggplot2)
 library(plotly)
-
+library(stopwords)
 
 #### import recpas of BB ################################################################
 AllBB = readRDS("data/AllBB.RDs")
@@ -30,7 +30,7 @@ it_train = itoken(
   progressbar = TRUE
 )
 
-stopw = c(tm::stopwords(), letters)
+stopw = c(stopwords::stopwords(), letters)
 
 vocab = create_vocabulary(
   it_train, 
@@ -59,7 +59,14 @@ vectorizer <- vocab_vectorizer(
 
 tcm <- create_tcm(it_train, vectorizer, skip_grams_window = 5L)
 dim(tcm)
-tcm[1:10,1:10]
+
+## eerste rij in TCM is woord "miraculously"
+tcm[1:2,1:2]
+
+## woorden die vaak in de buurt van 'miraculously' voortkomen 
+x =  tcm[1,] 
+x [x > 0]
+
 
 #######  Glove word embeddings
 
@@ -82,7 +89,7 @@ t1-t0
 
 saveRDS(word_vectors, "data/word_vectors_BB.RDs")
 
-#word_vectors = readRDS("data/word_vectors_BB.RDs")
+word_vectors = readRDS("data/word_vectors_BB.RDs")
 
 ###### distances between some characters ################################################
 
