@@ -37,9 +37,8 @@ vocab = create_vocabulary(
   ngram = c(ngram_min = 1L, ngram_max = 1L),
   stopwords = stopw
 )
-vocab
 
-########### Prune vocabulary ############################################################
+########### Prune vocabulary ##############################################
 
 pruned_vocab = prune_vocabulary(
   vocab, 
@@ -99,7 +98,7 @@ ff = function(word)
 {
   WV <- word_vectors[word, , drop = FALSE] 
   cos_sim = sim2(x = word_vectors, y = WV, method = "cosine", norm = "l2")
-  tmp = head(sort(cos_sim[,1], decreasing = TRUE), 10)
+  tmp = head(sort(cos_sim[,1], decreasing = TRUE), 8)
   tibble::tibble(from = word, to = names(tmp), value = tmp)
 }
 
