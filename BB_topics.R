@@ -58,7 +58,7 @@ dim(dtm)
 # Een rij uit de matrix is een tekst met woord tellingen
 dtm[1,1:15]
 
-### maak en train topic model met 10 topics
+### Create and train a topic model with 10 topics
 lda_model = LDA$new(
   n_topics = 10, 
   doc_topic_prior = 0.1, 
