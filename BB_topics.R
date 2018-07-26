@@ -141,5 +141,38 @@ highlightwords(
   onderwerpen$TOPIC_3
 )
 
+#### Part of Speech Tagging ##########################################################
+
+library(cleanNLP)
+#download_core_nlp()
+init_coreNLP(anno_level = 2L)
+obj = cnlp_annotate(AllBB$recapsclean[1:500], as_strings = TRUE, backend = "coreNLP")
+tokeninfo  = cnlp_get_token(obj)
+# split in list
+pp = tapply(tokeninfo$word, tokeninfo$id, list, simplify = TRUE) %>% as.list()
 
 
+myiter = pp %>% 
+  itoken(
+    progressbar = TRUE
+  )
+
+class(pp)
+
+myvectorizer = myiter %>% 
+  create_vocabulary(
+    ngram = c(ngram_min = 1L, ngram_max = 1L),
+    stopwords = c(stopw, "said", "says", "told")
+  ) %>% 
+  prune_vocabulary(
+    term_count_min = 5 ,
+    doc_proportion_max = 0.95
+  ) %>% 
+  vocab_vectorizer()
+
+## with a iterator and a vectorizer we can create a DTM
+dtm2 = create_dtm(myiter, myvectorizer)
+
+dim(dtm2)
+
+dtm2[1,   ]
