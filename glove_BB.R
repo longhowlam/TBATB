@@ -17,52 +17,42 @@ AllBB = readRDS("data/AllBB.RDs")
 
 AllBB$recapsclean =  str_replace_all(AllBB$recaps, "\n", "") %>% tolower
 AllBB$id = 1:dim(AllBB)[1]
-
-
-####### tokenize ############################################################
-AllBB_tokens = AllBB$recapsclean %>%
-  word_tokenizer
-
-##### use the tokens to create an iterator and vocabular
-it_train = itoken(
-  AllBB_tokens, 
-  ids = AllBB$id,
-  progressbar = TRUE
-)
-
 stopw = c(stopwords::stopwords(), letters)
 
-vocab = create_vocabulary(
-  it_train, 
-  ngram = c(ngram_min = 1L, ngram_max = 1L),
-  stopwords = stopw
-)
+####### tokenize, iterate and create vocab  ###################################
+it_train =  AllBB$recapsclean %>%
+  word_tokenizer() %>% 
+  itoken(
+    ids = AllBB$id,
+    progressbar = TRUE
+  )
 
-########### Prune vocabulary ##############################################
-
-pruned_vocab = prune_vocabulary(
-  vocab, 
-  term_count_min = 5 ,
-  doc_proportion_max = 0.95
-)
-
-print("*** vocab generated****")
-print(pruned_vocab)
+pruned_vocab = it_train %>% 
+  create_vocabulary(
+    ngram = c(ngram_min = 1L, ngram_max = 1L),
+    stopwords = stopw
+  ) %>% 
+  prune_vocabulary(
+    term_count_min = 5 ,
+    doc_proportion_max = 0.95
+  )
 
 vectorizer <- vocab_vectorizer(
   pruned_vocab
 )
 
+#### Create the so-called term co-occurence matrix ############################
+tcm <- create_tcm(
+  it_train, 
+  vectorizer, 
+  skip_grams_window = 5L
+)
 
-#### Create term co-occurence matrix ####################################################
 
-tcm <- create_tcm(it_train, vectorizer, skip_grams_window = 5L)
-dim(tcm)
-
-## eerste rij in TCM is woord "miraculously"
+## first two words in the tcm matrix are "miraculously" and fearfully
 tcm[1:2,1:2]
 
-## woorden die vaak in de buurt van 'miraculously' voortkomen 
+## words that occur often in the neighborhood of 'miraculously' 
 x =  tcm[1,] 
 x [x > 0]
 
@@ -80,6 +70,8 @@ glove = GlobalVectors$new(
 )
 
 word_vectors = glove$fit_transform(tcm, n_iter = 30)
+dim (word_vectors)
+
 
 t1 = proc.time()
 t1-t0

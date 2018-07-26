@@ -11,7 +11,7 @@ pruned_vocab =
     progressbar = TRUE
   ) %>% 
   create_vocabulary(
-    ngram = c(ngram_min = 1L, ngram_max = 1L),
+    ngram = c(ngram_min = 1L, ngram_max = 2L),
     stopwords = stopw
   ) %>% 
   prune_vocabulary(
