@@ -28,24 +28,13 @@ scrapeBByear = function(start){
 BBrecaps = purrr::map_dfr(yearstartdates, scrapeBByear)
 
 
-start = ymd(170102)
-outrecaps2017 = NULL
-for(i in 1:42)
-{
-  dstring = format(start, format="%y%m%d")  
-  link = paste0("http://soapcentral.com/bb/recaps/2017/", dstring, ".php")
-  print(link)
-  out = read_html(link)
-  recaps = html_nodes(out, xpath = '//div[@id="news_article"]')  %>% html_text()
-  temp = tibble(recaps=recaps, date = start)
-  outrecaps2017 = bind_rows(outrecaps2017, temp)
-  start = start + 7
-}
+start = ymd(170102, 180101)
+outrecaps201718 = purrr::map_dfr(start, scrapeBByear)
 
 
 AllBB = bind_rows(
   BBrecaps,
-  outrecaps2017
+  outrecaps201718
 )
 
 saveRDS(AllBB , "data/AllBB.RDs")
